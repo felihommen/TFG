@@ -1,0 +1,32 @@
+services:
+  php:
+    build:
+      context: ./php
+    volumes:
+      - ./php:/var/www/html
+    ports:
+      - 8000:80
+
+  database:
+    image: mariadb
+    user: 1000:1000
+    volumes:
+      - ./volumes/database:/var/lib/mysql
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    environment:
+      - TZ=Europe/Madrid
+      - MARIADB_ROOT_PASSWORD
+      - MARIADB_USER=tfg
+      - MARIADB_PASSWORD=tfg
+      - MARIADB_DATABASE=TFG
+      - MARIADB_CHARACTER_SET=utf8mb4
+      - MARIADB_COLLATE=utf8mb4_unicode_ci
+
+  quasar:
+    build:
+      context: ./quasar
+    ports:
+      - 9000:9000
+    volumes:
+      - ./quasar:/app
+    command: /bin/sh -c "yarn && quasar dev"
